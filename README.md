@@ -9,16 +9,16 @@
 
 ---
 
-## 📋 Overview
+## Overview
 
 An **end-to-end machine learning platform** for security threat intelligence, processing 257,000+ network security events through orchestrated data pipelines with experiment tracking and analytics capabilities.
 
 **Key Capabilities:**
-- 🔄 Automated ETL pipelines with Apache Airflow
-- ⚡ Distributed processing with PySpark
-- 📊 SQL-queryable analytics warehouse (PostgreSQL)
-- 🧠 ML model training with MLflow experiment tracking
-- 🎯 Attack detection classifier (84% AUC, 79% F1)
+- Automated ETL pipelines with Apache Airflow
+- Distributed processing with PySpark
+- SQL-queryable analytics warehouse (PostgreSQL)
+- ML model training with MLflow experiment tracking
+- Attack detection classifier (84% AUC, 79% F1)
 
 **Dataset:** [UNSW-NB15](https://research.unsw.edu.au/projects/unsw-nb15-dataset) - Modern network intrusion detection dataset with 9 attack categories
 
@@ -46,7 +46,7 @@ Raw CSV Data → Spark ETL → Parquet Storage → Postgres Warehouse → ML Tra
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker Desktop (Mac/Windows) or Docker Engine (Linux)
@@ -82,7 +82,7 @@ docker exec -it $(docker ps -q -f name=airflow-scheduler) \
 
 ---
 
-## 📊 Results
+## Results
 
 ### Model Performance
 
@@ -113,7 +113,7 @@ docker exec -it $(docker ps -q -f name=airflow-scheduler) \
 
 ---
 
-## 📖 Usage
+## Usage
 
 ### Running Pipelines
 
@@ -145,7 +145,7 @@ ORDER BY total DESC;
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 risk-intel-platform/
@@ -191,7 +191,7 @@ risk-intel-platform/
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 ### Airflow Pipeline Execution
 ![ETL Pipeline](docs/airflow_etl_dag.png)
@@ -209,7 +209,7 @@ risk-intel-platform/
 
 ---
 
-## 🐛 Known Issues
+## Known Issues
 
 ### Python Dependencies Not Persisting
 **Issue:** ML packages need reinstalling after `docker compose down`.
@@ -226,7 +226,7 @@ docker exec -it $(docker ps -q -f name=airflow-scheduler) \
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 ### Phase 2: Dashboard & Visualization (Planned)
 - [ ] Metabase or Streamlit dashboard
@@ -253,30 +253,21 @@ docker exec -it $(docker ps -q -f name=airflow-scheduler) \
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Suggestions and improvements welcome! This is a learning/portfolio project.
 
 ---
 
-## 📄 License
+## License
 
 MIT License - See [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Dataset:** UNSW-NB15 by [UNSW Canberra Cyber](https://research.unsw.edu.au/projects/unsw-nb15-dataset)
 - **Technologies:** Apache Airflow, MLflow, PySpark, PostgreSQL communities
 
----
 
-## 📧 Contact
-
-**Your Name**  
-[GitHub](https://github.com/YOUR_USERNAME) | [LinkedIn](https://linkedin.com/in/YOUR_PROFILE) | [Email](mailto:your.email@example.com)
-
----
-
-**Built for learning ML platform engineering** ❤️
