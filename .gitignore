@@ -1,0 +1,92 @@
+# Data files (too large for git)
+data/local/raw/**
+data/local/curated/**
+data/artifacts/**
+data/mlflow/**
+data/sample/**
+
+# Airflow generated files
+airflow/dags/__pycache__/
+airflow/plugins/__pycache__/
+airflow/logs/**
+*.pyc
+*.pyo
+__pycache__/
+airflow.db
+airflow.cfg
+
+# MLflow
+mlflow/artifacts/**
+mlflow/mlflow.db
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment files (keep .env.example, ignore .env)
+.env
+
+# R files
+.Rhistory
+.RData
+.Rproj.user
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.log
+*.pid
+*.seed
+*.pid.lock
+*.tmp
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Docker volumes
+dbt/
+
+# Keep directory structure but ignore contents
+!data/local/raw/.gitkeep
+!data/local/curated/.gitkeep
+!airflow/logs/.gitkeep
+!mlflow/artifacts/.gitkeep
+
+# Keep example files
+!.env.example
