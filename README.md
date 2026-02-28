@@ -219,23 +219,6 @@ risk-intel-platform/
 
 ---
 
-## Known Issues
-
-### Python Dependencies Not Persisting
-**Issue:** ML packages need reinstalling after `docker compose down`.
-
-**Workaround:**
-```bash
-docker exec -it $(docker ps -q -f name=airflow-webserver) \
-  pip install scikit-learn mlflow psycopg2-binary
-docker exec -it $(docker ps -q -f name=airflow-scheduler) \
-  pip install scikit-learn mlflow psycopg2-binary
-```
-
-**Permanent fix (planned):** Custom Dockerfile with baked dependencies.
-
----
-
 ## Future Improvements
 
 - [ ] Tree-based models (XGBoost, Random Forest)
