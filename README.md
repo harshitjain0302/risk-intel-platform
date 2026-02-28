@@ -11,14 +11,9 @@
 
 ## Overview
 
-An **end-to-end machine learning platform** for security threat intelligence, processing 257,000+ network security events through orchestrated data pipelines with experiment tracking and analytics capabilities.
+The Risk Intelligence Platform is an end-to-end security analytics system that ingests large-scale network flow data, performs distributed feature engineering, builds a cloud-backed data lake, and trains an intrusion detection classifier with experiment tracking.
 
-**Key Capabilities:**
-- Automated ETL pipelines with Apache Airflow
-- Distributed processing with PySpark
-- SQL-queryable analytics warehouse (PostgreSQL)
-- ML model training with MLflow experiment tracking
-- Attack detection classifier (84% AUC, 79% F1)
+This project demonstrates production-style data engineering and machine learning workflows using modern data stack tools.
 
 **Dataset:** [UNSW-NB15](https://research.unsw.edu.au/projects/unsw-nb15-dataset) - Modern network intrusion detection dataset with 9 attack categories
 
@@ -27,22 +22,37 @@ An **end-to-end machine learning platform** for security threat intelligence, pr
 ## 🏗️ Architecture
 
 ```
-Raw CSV Data → Spark ETL → Parquet Storage → Postgres Warehouse → ML Training → MLflow Tracking
-      ↓              ↓            ↓                ↓                   ↓              ↓
-  Validation    Transforms   Partitioned      SQL Analytics      Classification   Experiments
+Raw CSV (AWS S3)
+↓
+Spark ETL (Feature Engineering)
+↓
+Partitioned Parquet (S3 Data Lake)
+↓
+Postgres Warehouse (Analytics Layer)
+↓
+Airflow ML Training DAG
+↓
+Logistic Regression Classifier
+↓
+MLflow Experiment Tracking
+↓
+Model Artifact (AWS S3)          
+
 ```
 
 **Full architecture diagram:** [See docs/architecture.md](docs/architecture.md)
 
 ### Tech Stack
 
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| **Orchestration** | Apache Airflow | DAG scheduling, monitoring, retries |
-| **Processing** | PySpark | ETL transformations at scale |
-| **Storage** | Parquet + PostgreSQL | Columnar files + relational warehouse |
-| **ML Tracking** | MLflow | Experiment logging & comparison |
-| **Infrastructure** | Docker Compose | Containerized local deployment |
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| Orchestration | Apache Airflow | DAG scheduling, monitoring, retries |
+| Processing | PySpark | Distributed ETL transformations |
+| Storage | AWS S3 (Parquet) | Cloud data lake |
+| Warehouse | PostgreSQL | SQL analytics & feature store |
+| ML Tracking | MLflow | Experiment tracking & metrics |
+| Modeling | scikit-learn | Intrusion detection classifier |
+| Infrastructure | Docker Compose | Containerized deployment |
 
 ---
 
@@ -226,30 +236,12 @@ docker exec -it $(docker ps -q -f name=airflow-scheduler) \
 
 ---
 
-## Roadmap
+## Future Improvements
 
-### Phase 2: Dashboard & Visualization (Planned)
-- [ ] Metabase or Streamlit dashboard
-- [ ] Real-time attack monitoring
-- [ ] Interactive analytics
-
-### Phase 3: Cloud Migration - AWS (Planned)
-- [ ] S3 data storage
-- [ ] EMR for Spark processing
-- [ ] Managed Airflow (MWAA)
-- [ ] RDS for PostgreSQL
-
-### Phase 4: Advanced ML (Future)
-- [ ] XGBoost/Random Forest models
-- [ ] Multi-class classification
+- [ ] Tree-based models (XGBoost, Random Forest)
 - [ ] Real-time inference API
+- [ ] CI/CD automation for retraining
 - [ ] Model drift monitoring
-
-### Phase 5: Production Hardening (Future)
-- [ ] Custom Docker images
-- [ ] CI/CD pipeline
-- [ ] Automated testing
-- [ ] Secrets management
 
 ---
 
