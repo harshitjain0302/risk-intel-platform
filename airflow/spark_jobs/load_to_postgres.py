@@ -1,10 +1,10 @@
 """
-Load curated UNSW-NB15 data into Postgres warehouse
+Load curated UNSW-NB15 data from S3 into Postgres warehouse
 """
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
-from pathlib import Path
+import boto3
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +19,9 @@ DB_CONFIG = {
     'password': 'airflow'
 }
 
-CURATED_DATA_PATH = Path("/opt/airflow/data/local/curated/unsw_nb15")
+# S3 configuration
+S3_BUCKET = 'risk-intel-platform-harshit'
+S3_PREFIX = 'curated/unsw_nb15/'
 
 
 def create_tables(conn):
@@ -73,32 +75,45 @@ def create_tables(conn):
         logger.info("✓ Tables created/verified")
 
 
-def load_parquet_to_postgres(conn):
-    """Load all curated Parquet files into Postgres"""
-    
+def load_parquet_from_s3_to_postgres(conn):
+    """Load all curated Parquet files from S3 into Postgres"""
     flows_loaded = 0
     
-    # Find all parquet files
-    parquet_files = list(CURATED_DATA_PATH.rglob("*.parquet"))
+    # Initialize S3 client
+    s3 = boto3.client('s3')
+    
+    logger.info(f"Listing files in s3://{S3_BUCKET}/{S3_PREFIX}")
+    
+    # List all parquet files in S3
+    paginator = s3.get_paginator('list_objects_v2')
+    parquet_files = []
+    
+    for page in paginator.paginate(Bucket=S3_BUCKET, Prefix=S3_PREFIX):
+        if 'Contents' in page:
+            for obj in page['Contents']:
+                if obj['Key'].endswith('.parquet'):
+                    parquet_files.append(obj['Key'])
+    
     logger.info(f"Found {len(parquet_files)} parquet files to load")
     
-    for pq_file in parquet_files:
-        logger.info(f"Loading {pq_file.name}...")
+    for s3_key in parquet_files:
+        logger.info(f"Loading {s3_key.split('/')[-1]}...")
         
-        # Read parquet
-        df = pd.read_parquet(pq_file)
+        # Read parquet from S3
+        s3_path = f"s3://{S3_BUCKET}/{s3_key}"
+        df = pd.read_parquet(s3_path)
         
         # Extract partition values from path
-        if 'dataset_split=train' in str(pq_file):
+        if 'dataset_split=train' in s3_key:
             df['dataset_split'] = 'train'
-        elif 'dataset_split=test' in str(pq_file):
+        elif 'dataset_split=test' in s3_key:
             df['dataset_split'] = 'test'
         
-        if 'traffic_volume=high' in str(pq_file):
+        if 'traffic_volume=high' in s3_key:
             df['traffic_volume'] = 'high'
-        elif 'traffic_volume=medium' in str(pq_file):
+        elif 'traffic_volume=medium' in s3_key:
             df['traffic_volume'] = 'medium'
-        elif 'traffic_volume=low' in str(pq_file):
+        elif 'traffic_volume=low' in s3_key:
             df['traffic_volume'] = 'low'
         
         # Select columns to load (adjust based on your actual schema)
@@ -161,7 +176,7 @@ def build_summary_table(conn):
 
 def main():
     """Main ETL process"""
-    logger.info("Starting Postgres load...")
+    logger.info("Starting Postgres load from S3...")
     
     # Connect to Postgres
     conn = psycopg2.connect(**DB_CONFIG)
@@ -176,13 +191,13 @@ def main():
             conn.commit()
         logger.info("✓ Cleared existing data")
         
-        # Step 3: Load parquet files
-        flows_loaded = load_parquet_to_postgres(conn)
+        # Step 3: Load parquet files from S3
+        flows_loaded = load_parquet_from_s3_to_postgres(conn)
         
         # Step 4: Build summary
         build_summary_table(conn)
         
-        logger.info(f"✅ Postgres load complete! {flows_loaded:,} flows loaded")
+        logger.info(f"✅ Postgres load complete! {flows_loaded:,} flows loaded from S3")
         
     finally:
         conn.close()

@@ -11,13 +11,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def create_spark_session():
-    """Create local Spark session"""
     spark = SparkSession.builder \
         .appName("UNSW-ETL") \
         .config("spark.driver.memory", "4g") \
         .config("spark.sql.shuffle.partitions", "4") \
+        .config("spark.jars.packages",
+                "org.apache.hadoop:hadoop-aws:3.4.0") \
+        .config("spark.hadoop.fs.s3a.impl",
+                "org.apache.hadoop.fs.s3a.S3AFileSystem") \
         .getOrCreate()
-    
+
     spark.sparkContext.setLogLevel("WARN")
     return spark
 
@@ -251,9 +254,9 @@ def main():
     
     try:
         # Define paths
-        train_path = "/opt/airflow/data/local/raw/unsw_nb15/UNSW_NB15_training-set.csv"
-        test_path = "/opt/airflow/data/local/raw/unsw_nb15/UNSW_NB15_testing-set.csv"
-        output_path = "/opt/airflow/data/local/curated/unsw_nb15/"
+        train_path = "s3a://risk-intel-platform-harshit/raw/unsw_nb15/UNSW_NB15_training-set.csv"
+        test_path = "s3a://risk-intel-platform-harshit/raw/unsw_nb15/UNSW_NB15_testing-set.csv"
+        output_path = "s3a://risk-intel-platform-harshit/curated/unsw_nb15/"
         
         # ETL Pipeline
         logger.info("Starting UNSW-NB15 ETL Pipeline")

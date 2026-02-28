@@ -6,6 +6,9 @@ import mlflow.sklearn
 import psycopg2
 import pandas as pd
 import numpy as np
+import joblib
+import boto3
+import tempfile
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -165,8 +168,23 @@ def main():
         for metric_name, metric_value in metrics.items():
             mlflow.log_metric(metric_name, metric_value)
         
-        # Note: Model artifact saving skipped due to permissions
-        # Metrics and parameters are the key tracking for experiments
+        # Save model and scaler locally
+        with tempfile.TemporaryDirectory() as tmpdir:
+            model_path = f"{tmpdir}/attack_model.pkl"
+            scaler_path = f"{tmpdir}/scaler.pkl"
+            
+            joblib.dump(model, model_path)
+            joblib.dump(scaler, scaler_path)
+
+            # Upload to S3
+            s3 = boto3.client("s3")
+            bucket = "risk-intel-platform-harshit"
+
+            s3.upload_file(model_path, bucket, "models/attack_classifier/attack_model.pkl")
+            s3.upload_file(scaler_path, bucket, "models/attack_classifier/scaler.pkl")
+
+            logger.info("✓ Model and scaler uploaded to S3")
+
         
         logger.info("✅ Model training complete and logged to MLflow!")
         logger.info(f"Run ID: {mlflow.active_run().info.run_id}")

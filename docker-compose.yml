@@ -50,13 +50,17 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ''
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      # ADD THESE AWS CREDENTIALS:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - ./data:/opt/airflow/data
       - ./ml:/opt/airflow/ml
-      - ./spark_jobs:/opt/airflow/spark_jobs
+      - ./airflow/spark_jobs:/opt/airflow/spark_jobs  # ← CORRECT PATH
     ports:
       - "8080:8080"
     command: webserver
@@ -78,13 +82,17 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ''
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      # ADD THESE AWS CREDENTIALS:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - ./data:/opt/airflow/data
       - ./ml:/opt/airflow/ml
-      - ./spark_jobs:/opt/airflow/spark_jobs
+      - ./airflow/spark_jobs:/opt/airflow/spark_jobs  # ← CORRECT PATH
     command: scheduler
     user: "50000:0"
 
